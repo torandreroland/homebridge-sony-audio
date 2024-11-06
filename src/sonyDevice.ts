@@ -692,7 +692,7 @@ export class SonyDevice extends EventEmitter {
           }
 
           this.log.debug(`Device ${this.systemInfo.name} sent subscribe message ${JSON.stringify(this.switchNotifications(2, disabled, enabled))}`);
-          ws['subscriptionCommand'] = JSON.stringify(this.switchNotifications(2, disabled, enabled));
+          ws['subscriptionCommand'] = JSON.stringify(this.switchNotifications(2, disabled.length == 0 ? null as any : disabled, enabled));
           ws.send(ws['subscriptionCommand']);
 
         } else if (response.id === 100) { // unsubscribe from notifications
@@ -914,6 +914,24 @@ export class SonyDevice extends EventEmitter {
     };
     await this.axiosInstance.post('/' + service, JSON.stringify(reqSetVolume));
     return volumeSelector;
+  }
+
+  public async setVolumeAbsolute(value: number) {
+    const service = 'audio';
+    const zone = await this.getActiveZone();
+    const reqSetVolume: ApiRequestSetAudioVolume = {
+      id: 98,
+      method: 'setAudioVolume',
+      params: [
+        {
+          output: zone ? zone.uri : '',
+          volume: String(value),
+        },
+      ],
+      version: '1.1',
+    };
+    await this.axiosInstance.post('/' + service, JSON.stringify(reqSetVolume));
+    return value;
   }
 
   /**
