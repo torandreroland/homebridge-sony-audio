@@ -107,7 +107,7 @@ export class SonyAudioAccessory {
       
       const inputSourceSubtype = this.getInputSubtype(terminal);
       const identifier = index;
-      const inputName = getHomeKitName(terminal.label || terminal.title || terminal.uri, `Input ${index + 1}`);
+      const inputName = getHomeKitName(terminal.title || terminal.uri, `Input ${index + 1}`);
       const serviceInputSource = this.accessory.getServiceById(this.platform.Service.InputSource, inputSourceSubtype) ||
         this.accessory.addService(this.platform.Service.InputSource, inputName, inputSourceSubtype);
       serviceInputSource.updateCharacteristic(this.platform.Characteristic.Name, inputName);
