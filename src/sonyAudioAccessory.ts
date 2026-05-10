@@ -107,13 +107,14 @@ export class SonyAudioAccessory {
       
       const inputSourceSubtype = this.getInputSubtype(terminal);
       const identifier = index;
-      const inputName = getHomeKitName(terminal.title || terminal.uri, `Input ${index + 1}`);
+      const inputName = getHomeKitName(terminal.uri, `Input ${index + 1}`);
+      const configuredInputName = getHomeKitName(terminal.label ? terminal.label : terminal.title, inputName);
       const serviceInputSource = this.accessory.getServiceById(this.platform.Service.InputSource, inputSourceSubtype) ||
         this.accessory.addService(this.platform.Service.InputSource, inputName, inputSourceSubtype);
       serviceInputSource.updateCharacteristic(this.platform.Characteristic.Name, inputName);
       serviceInputSource.updateCharacteristic(this.platform.Characteristic.ConfiguredName, getHomeKitName(
-        await this.accessorySettings.getInputName(inputSourceSubtype, inputName),
-        inputName,
+        await this.accessorySettings.getInputName(inputSourceSubtype, configuredInputName),
+        configuredInputName,
       ));
 
       const defaultVisibility = this.platform.Characteristic.CurrentVisibilityState.SHOWN;
